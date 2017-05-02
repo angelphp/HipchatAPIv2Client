@@ -4,21 +4,14 @@ namespace GorkaLaucirica\HipchatAPIv2Client\Model;
 
 class Message
 {
-
     protected $id = null;
-
     protected $color;
-
     protected $message;
-
-    protected $notify;
-
     protected $messageFormat;
-
     protected $date = null;
-
     protected $from = '';
-
+    protected $mentions = [];
+    protected $type;
 
     const COLOR_YELLOW = 'yellow';
     const COLOR_GREEN = 'green';
@@ -41,7 +34,6 @@ class Message
             $this->color = self::COLOR_YELLOW;
             $this->messageFormat = self::FORMAT_HTML;
             $this->message = "";
-            $this->notify = false;
         }
     }
 
@@ -51,9 +43,11 @@ class Message
         $this->from = is_array($json['from']) ? $json['from']['name'] : $json['from'];
         $this->message = $json['message'];
         $this->color = isset($json['color']) ? $json['color'] : null;
-        $this->notify = $json['notify'];
         $this->messageFormat = isset($json['message_format']) ? $json['message_format'] : 'html';
         $this->date = $json['date'];
+        $this->mentions = $json['mentions'];
+        $this->type = $json['type'];
+
     }
 
 
@@ -69,9 +63,10 @@ class Message
         $json['from'] = $this->from;
         $json['color'] = $this->color;
         $json['message'] = $this->message;
-        $json['notify'] = $this->notify;
         $json['message_format'] = $this->messageFormat;
         $json['date'] = $this->date;
+        $json['mentions'] = $this->mentions;
+        $json['type'] = $this->type;
 
         return $json;
 
@@ -123,29 +118,7 @@ class Message
         return $this->message;
     }
 
-    /**
-     * Sets whether or not this message should trigger a notification
-     *
-     * @param boolean $notify Whether or not this message should trigger a notification
-     *
-     * @return self
-     */
-    public function setNotify($notify)
-    {
-        $this->notify = $notify;
-        return $this;
-    }
 
-    /**
-     * Returns whether or not this message should trigger a notification for people in the room
-     * (change the tab color, play a sound, etc). Each recipient's notification preferences are taken into account.
-     *
-     * @return boolean
-     */
-    public function isNotify()
-    {
-        return $this->notify;
-    }
 
     /**
      * Sets how the message is treated by the server and rendered inside HipChat applications
@@ -192,4 +165,45 @@ class Message
     {
         return $this->from;
     }
+
+    /**
+     * Get mentions in message.
+     *
+     * @return array
+     */
+    public function getMentions()
+    {
+        return $this->mentions;
+    }
+
+    /**
+     * Set mentions in the message
+     * @param array
+     * @return array
+     */
+    public function setMentions($mentions)
+    {
+        $this->mentions = $mentions;
+    }
+
+    /**
+     * Get type of message
+     * Posible values: message, guest_access, topic, notification.
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set The type of message
+     *
+     * @param $type string | message, guest_access, topic, notification
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
 }
